@@ -124,6 +124,18 @@ api.post('/students/:id/payments', async (c) => {
   return c.json({ message: 'Payment recorded successfully' })
 })
 
+const monthsDue = (joinDate: Date, now: Date) => {
+  // Fees become due on the day before the monthly anniversary.
+  // Example: join 03/04/2026 -> first due date 02/05/2026.
+  const dueDay = Math.max(1, joinDate.getDate() - 1)
+  const firstDue = new Date(joinDate.getFullYear(), joinDate.getMonth() + 1, dueDay)
+  if (now < firstDue) return 0
+
+  let months = (now.getFullYear() - firstDue.getFullYear()) * 12 + (now.getMonth() - firstDue.getMonth())
+  if (now.getDate() >= dueDay) months += 1
+  return Math.max(months, 0)
+}
+
 api.get('/fees', async (c) => {
   const auth = getAuth(c)
   const tutorId = auth!.orgId || auth!.userId
@@ -137,21 +149,20 @@ api.get('/fees', async (c) => {
   
   const results = students.results.map((student: any) => {
       const joinDate = new Date(student.joining_date)
-      let monthsPassed = (now.getFullYear() - joinDate.getFullYear()) * 12 + (now.getMonth() - joinDate.getMonth()) + 1
-      if (monthsPassed < 1) monthsPassed = 1
+      const monthsPassed = monthsDue(joinDate, now)
       
       const monthlyFee = Number(student.monthly_fee)
       const expectedTotal = monthsPassed * monthlyFee
       const totalPaid = Number(paymentsMap.get(student.id) || 0)
       
       let pendingMonths = 0
-      let paidMonths = totalPaid / monthlyFee
+      let paidMonths = monthlyFee ? totalPaid / monthlyFee : 0
       let overpaidAmount = 0
       
       if (totalPaid >= expectedTotal) {
           overpaidAmount = totalPaid - expectedTotal
       } else {
-          pendingMonths = Math.ceil((expectedTotal - totalPaid) / monthlyFee)
+          pendingMonths = monthlyFee ? Math.ceil((expectedTotal - totalPaid) / monthlyFee) : 0
       }
       
       return {
@@ -239,14 +250,13 @@ api.get('/metrics', async (c) => {
 
   for (const student of students.results as any[]) {
     const joinDate = new Date(student.joining_date)
-    let monthsPassed = (now.getFullYear() - joinDate.getFullYear()) * 12 + (now.getMonth() - joinDate.getMonth()) + 1
-    if (monthsPassed < 1) monthsPassed = 1
+    const monthsPassed = monthsDue(joinDate, now)
     const monthlyFee = Number(student.monthly_fee)
     const expectedTotal = monthsPassed * monthlyFee
     const rawPaid = paymentsMap.get(student.id)
     const totalPaid: number = typeof rawPaid === 'number' ? rawPaid : 0
     if (totalPaid < expectedTotal) {
-      const pendingMonths = Math.ceil((expectedTotal - totalPaid) / monthlyFee)
+      const pendingMonths = monthlyFee ? Math.ceil((expectedTotal - totalPaid) / monthlyFee) : 0
       totalDue += pendingMonths * monthlyFee
       if (pendingMonths > 1) overdueCount++
     }
