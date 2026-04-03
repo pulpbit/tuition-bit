@@ -242,10 +242,14 @@ api.get('/metrics', async (c) => {
   let overdueCount = 0
   let totalDue = 0
 
-  const thisMonthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const thisMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  // Accept either structured billing_period (YYYY-MM) or fall back to payment_date month.
   const thisMonthPayments = await c.env.DB.prepare(
-    "SELECT SUM(amount) as total FROM payments WHERE billing_period LIKE ?"
-  ).bind(`%${thisMonthStart}%`).first('total')
+    `SELECT SUM(amount) as total
+     FROM payments
+     WHERE billing_period LIKE ?
+        OR substr(payment_date, 1, 7) = ?`
+  ).bind(`%${thisMonthKey}%`, thisMonthKey).first('total')
   totalFeeCollectedThisMonth = Number(thisMonthPayments || 0)
 
   for (const student of students.results as any[]) {
