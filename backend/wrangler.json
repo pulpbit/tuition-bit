@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tuition-bit-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-04-03",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tuition-bit-db",
+      "database_id": "e40f126c-3dc4-4407-8ead-27db8b1bd209"
+    }
+  ]
+}
