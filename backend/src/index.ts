@@ -52,11 +52,11 @@ api.post('/students', async (c) => {
   const id = (globalThis as any).crypto.randomUUID()
   
   await c.env.DB.prepare(
-    `INSERT INTO students (id, tutor_id, name, class_name, school, board, parent_name, parent_phone, whatsapp, monthly_fee, joining_date)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO students (id, tutor_id, name, class_name, school, board, whatsapp, monthly_fee, joining_date)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(
     id, tutorId, body.name, body.class_name, body.school, body.board,
-    body.parent_name, body.parent_phone, body.whatsapp, body.monthly_fee, body.joining_date
+    body.whatsapp, body.monthly_fee, body.joining_date
   ).run()
 
   return c.json({ id, message: 'Student created successfully' })
@@ -69,10 +69,10 @@ api.put('/students/:id', async (c) => {
   const body = await c.req.json()
 
   await c.env.DB.prepare(
-    `UPDATE students SET name = ?, class_name = ?, school = ?, board = ?, parent_name = ?, parent_phone = ?, whatsapp = ?, monthly_fee = ?, joining_date = ?
+    `UPDATE students SET name = ?, class_name = ?, school = ?, board = ?, whatsapp = ?, monthly_fee = ?, joining_date = ?
      WHERE id = ? AND tutor_id = ?`
   ).bind(
-    body.name, body.class_name, body.school, body.board, body.parent_name, body.parent_phone, body.whatsapp, body.monthly_fee, body.joining_date, id, tutorId
+    body.name, body.class_name, body.school, body.board, body.whatsapp, body.monthly_fee, body.joining_date, id, tutorId
   ).run()
 
   return c.json({ message: 'Student updated successfully' })

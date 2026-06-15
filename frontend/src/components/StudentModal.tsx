@@ -18,8 +18,6 @@ export default function StudentModal({ isOpen, onClose, onSuccess, student }: St
     class_name: '',
     school: '',
     board: '',
-    parent_name: '',
-    parent_phone: '',
     whatsapp: '',
     monthly_fee: 0,
     joining_date: new Date().toISOString().split('T')[0]
@@ -34,8 +32,6 @@ export default function StudentModal({ isOpen, onClose, onSuccess, student }: St
         class_name: '',
         school: '',
         board: '',
-        parent_name: '',
-        parent_phone: '',
         whatsapp: '',
         monthly_fee: 0,
         joining_date: new Date().toISOString().split('T')[0]
@@ -121,18 +117,6 @@ export default function StudentModal({ isOpen, onClose, onSuccess, student }: St
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Education Board</label>
                 <input name="board" value={formData.board} onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Parent Name</label>
-                <input required name="parent_name" value={formData.parent_name} onChange={handleChange}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Parent Phone</label>
-                <input required name="parent_phone" value={formData.parent_phone} onChange={handleChange}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500" />
               </div>
               

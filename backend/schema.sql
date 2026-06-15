@@ -11,8 +11,6 @@ CREATE TABLE students (
   class_name TEXT NOT NULL,
   school TEXT NOT NULL,
   board TEXT,
-  parent_name TEXT,
-  parent_phone TEXT,
   whatsapp TEXT,
   monthly_fee INTEGER NOT NULL,
   joining_date TEXT NOT NULL,

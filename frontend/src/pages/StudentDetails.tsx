@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
-import { ArrowLeft, User, Phone, CheckCircle, Clock, X } from 'lucide-react';
+import { ArrowLeft, User, CheckCircle, Clock, X } from 'lucide-react';
 import { API_URL } from '../lib/api';
 
 export default function StudentDetails() {
@@ -88,31 +88,14 @@ export default function StudentDetails() {
             </div>
             
             <div className="space-y-3">
-              <div>
-                <p className="text-sm font-medium text-slate-500">Parent / Guardian</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <User className="w-4 h-4 text-slate-400" />
-                  <span className="text-slate-800 font-medium">{student.parent_name || 'N/A'}</span>
-                </div>
-              </div>
-              
-              <div className="flex gap-6">
+              {student.whatsapp && (
                 <div>
-                  <p className="text-sm font-medium text-slate-500">Phone</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Phone className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-700">{student.parent_phone}</span>
+                  <p className="text-sm font-medium text-slate-500">WhatsApp</p>
+                  <div className="flex items-center gap-2 mt-1 text-slate-700">
+                    {student.whatsapp}
                   </div>
                 </div>
-                {student.whatsapp && (
-                  <div>
-                    <p className="text-sm font-medium text-slate-500">WhatsApp</p>
-                    <div className="flex items-center gap-2 mt-1 text-slate-700">
-                      {student.whatsapp}
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
             
             <div className="md:col-span-2 pt-4 mt-4 border-t border-slate-100 flex justify-between items-center bg-slate-50 -mx-8 -my-6 px-8 py-5">
