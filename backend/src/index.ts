@@ -64,6 +64,29 @@ api.post('/students', async (c) => {
   return c.json({ id, message: 'Student created successfully' })
 })
 
+api.post('/students/bulk', async (c) => {
+  const auth = getAuth(c)
+  const tutorId = auth!.orgId || auth!.userId
+  const body = await c.req.json()
+  const students = body.students || []
+  let inserted = 0
+
+  for (const s of students) {
+    if (!s.name || !s.class_name || !s.school || !s.monthly_fee || !s.joining_date) continue
+    const id = (globalThis as any).crypto.randomUUID()
+    await c.env.DB.prepare(
+      `INSERT INTO students (id, tutor_id, name, class_name, school, board, whatsapp, monthly_fee, joining_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(
+      id, tutorId, s.name, s.class_name, s.school, s.board || null,
+      s.whatsapp || null, Number(s.monthly_fee), s.joining_date
+    ).run()
+    inserted++
+  }
+
+  return c.json({ message: `${inserted} students imported successfully`, count: inserted })
+})
+
 api.put('/students/:id', async (c) => {
   const auth = getAuth(c)
   const tutorId = auth!.orgId || auth!.userId

@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@clerk/clerk-react';
-import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Upload } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_URL } from '../lib/api';
 import StudentModal from '../components/StudentModal';
+import BulkImportModal from '../components/BulkImportModal';
 
 export default function StudentsList() {
   const { getToken } = useAuth();
@@ -11,6 +12,7 @@ export default function StudentsList() {
   const [loading, setLoading] = useState(true);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBulkOpen, setIsBulkOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<any>(null);
 
   const fetchStudents = useCallback(async () => {
@@ -65,13 +67,22 @@ export default function StudentsList() {
           <h2 className="text-2xl font-bold text-slate-900">Students</h2>
           <p className="text-slate-500 text-sm mt-1">Manage your enrolled students and their details.</p>
         </div>
-        <button 
-          onClick={handleAddStudent}
-          className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition"
-        >
-          <Plus className="w-5 h-5" />
-          Add Student
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsBulkOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition"
+          >
+            <Upload className="w-4 h-4" />
+            Bulk Import
+          </button>
+          <button 
+            onClick={handleAddStudent}
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-primary-700 transition"
+          >
+            <Plus className="w-5 h-5" />
+            Add Student
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -140,6 +151,12 @@ export default function StudentsList() {
         onClose={() => setIsModalOpen(false)}
         onSuccess={fetchStudents}
         student={selectedStudent}
+      />
+
+      <BulkImportModal
+        isOpen={isBulkOpen}
+        onClose={() => setIsBulkOpen(false)}
+        onSuccess={fetchStudents}
       />
     </div>
   );
