@@ -4,22 +4,24 @@ export function generateMessage(
   periodStart: string,
   periodEnd: string,
   orgName: string,
+  userName?: string
 ): string {
   const start = new Date(periodStart).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
   const end = new Date(periodEnd).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return [
-    `Dear Parent,`,
+    `*Dear Parent,*`,
     ``,
     `This is a friendly reminder that the tuition fee for ${studentName} for the period ${start} to ${end} is still pending.`,
     ``,
-    `Monthly Fee:`,
+    `*Monthly Fee:*`,
     `₹${monthlyFee}`,
     ``,
     `Please make the payment at your convenience.`,
     ``,
-    `Thank you.`,
-    `${orgName}`,
+    `*Thank you.*`,
+    `${userName}`,
+    `*TuitionBit App*`,
   ].join('\n')
 }
 
@@ -124,6 +126,7 @@ export async function checkAndCreateReminders(env: any) {
             period.periodStart,
             period.periodEnd,
             'Tuition Bit',
+            '',
           )
 
           const id = (globalThis as any).crypto.randomUUID()
@@ -156,6 +159,7 @@ export async function checkAndCreateReminders(env: any) {
               period.periodStart,
               period.periodEnd,
               'Tuition Bit',
+              '',
             )
 
             const id = (globalThis as any).crypto.randomUUID()
