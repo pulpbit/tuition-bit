@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { UserButton, useUser } from '@clerk/clerk-react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Users, CreditCard, CalendarCheck, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, CalendarCheck, Bell, Menu, X } from 'lucide-react';
 
 const navItems = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Students', path: '/students', icon: Users },
   { name: 'Fees', path: '/fees', icon: CreditCard },
   { name: 'Attendance', path: '/attendance', icon: CalendarCheck },
+  { name: 'Reminders', path: '/reminders', icon: Bell },
 ];
 
 export default function DashboardLayout() {

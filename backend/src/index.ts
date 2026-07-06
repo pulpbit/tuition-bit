@@ -1,6 +1,8 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
+import remindersRoute from './routes/reminders'
+import { checkAndCreateReminders } from './utils/reminder'
 
 type Bindings = {
   DB: any
@@ -276,4 +278,16 @@ api.get('/metrics', async (c) => {
   })
 })
 
-export default app
+api.post('/trigger-reminders', async (c) => {
+  await checkAndCreateReminders(c.env)
+  return c.json({ message: 'Reminder check complete' })
+})
+
+api.route('/reminders', remindersRoute)
+
+export default {
+  fetch: app.fetch,
+  async scheduled(event: any, env: any, ctx: any) {
+    await checkAndCreateReminders(env)
+  },
+}

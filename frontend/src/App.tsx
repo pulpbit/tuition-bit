@@ -6,6 +6,7 @@ import StudentsList from './pages/StudentsList';
 import StudentDetails from './pages/StudentDetails';
 import Attendance from './pages/Attendance';
 import FeesList from './pages/FeesList';
+import Reminders from './pages/Reminders';
 
 function LandingPage() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/students/:id" element={<StudentDetails />} />
           <Route path="/fees" element={<FeesList />} />
           <Route path="/attendance" element={<Attendance />} />
+          <Route path="/reminders" element={<Reminders />} />
         </Route>
       </Routes>
     </BrowserRouter>
