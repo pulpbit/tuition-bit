@@ -34,9 +34,19 @@ Copy the **database_id** from the output and update `backend/wrangler.json`:
 
 ## Step 2: Apply Schema to Production D1
 
+**⚠️ WARNING:** Never run `schema.sql` against an existing database — it's for fresh setups only.
+Use **D1 Migrations** instead (see Appendix A).
+
+### Fresh database (first time only):
 ```bash
 cd backend
 wrangler d1 execute tuition-bit-db --remote --file=schema.sql
+```
+
+### Existing database (safe — uses `CREATE TABLE IF NOT EXISTS`):
+```bash
+cd backend
+wrangler d1 migrations apply tuition-bit-db --remote
 ```
 
 ---
@@ -112,3 +122,35 @@ In Clerk Dashboard → Settings → Allowed Origins, add:
 - `https://tuition-bit.pages.dev` (or your custom domain)
 
 Also update `backend/src/index.ts` CORS to allow the production domain.
+
+---
+
+## Appendix A: D1 Migration Workflow
+
+Use this for **all future schema changes** to avoid data loss.
+
+### Create a new migration
+```bash
+cd backend
+npx wrangler d1 migrations create tuition-bit-db description_of_change
+```
+
+Edit the generated file in `backend/migrations/` with your SQL.
+
+### Apply migrations to production
+```bash
+cd backend
+npx wrangler d1 migrations apply tuition-bit-db --remote
+```
+
+### Apply migrations to local dev
+```bash
+cd backend
+npx wrangler d1 migrations apply tuition-bit-db --local
+```
+
+### Rules
+- Never `DROP TABLE` — use `CREATE TABLE IF NOT EXISTS` for new tables
+- Never `ALTER TABLE DROP COLUMN` — that would delete data
+- For new columns: `ALTER TABLE ... ADD COLUMN IF NOT EXISTS`
+- Always test with `--local` first, then `--remote`
