@@ -23,12 +23,24 @@ export function generateMessage(
   ].join('\n')
 }
 
-export function getDueDay(joinDate: Date): number {
-  return Math.max(1, joinDate.getDate() - 1)
+function addMonths(date: Date, n: number): Date {
+  const result = new Date(date)
+  const targetDay = result.getDate()
+  result.setMonth(result.getMonth() + n)
+  if (result.getDate() !== targetDay) {
+    result.setDate(0)
+  }
+  return result
+}
+
+function formatDate(d: Date): string {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
 }
 
 export function generateBillingPeriods(joinDate: Date, now: Date) {
-  const dueDay = getDueDay(joinDate)
   const periods: {
     periodStart: string
     periodEnd: string
@@ -36,25 +48,23 @@ export function generateBillingPeriods(joinDate: Date, now: Date) {
     billingKey: string
   }[] = []
 
-  const firstPeriod = new Date(joinDate.getFullYear(), joinDate.getMonth() + 1, 1)
-  const current = new Date(firstPeriod)
+  let current = new Date(joinDate)
 
   while (current <= now) {
-    const year = current.getFullYear()
-    const month = current.getMonth()
-    const monthStr = String(month + 1).padStart(2, '0')
-
-    const lastDay = new Date(year, month + 1, 0).getDate()
-    const dueDateObj = new Date(year, month, Math.min(dueDay, lastDay))
+    const periodStart = new Date(current)
+    const nextStart = addMonths(periodStart, 1)
+    const periodEnd = new Date(nextStart)
+    periodEnd.setDate(periodEnd.getDate() - 1)
+    const dueDate = new Date(periodEnd)
 
     periods.push({
-      periodStart: `${year}-${monthStr}-01`,
-      periodEnd: `${year}-${monthStr}-${lastDay}`,
-      dueDate: dueDateObj.toISOString().split('T')[0],
-      billingKey: `${year}-${monthStr}`,
+      periodStart: formatDate(periodStart),
+      periodEnd: formatDate(periodEnd),
+      dueDate: formatDate(dueDate),
+      billingKey: `${periodStart.getFullYear()}-${String(periodStart.getMonth() + 1).padStart(2, '0')}`,
     })
 
-    current.setMonth(current.getMonth() + 1)
+    current = nextStart
   }
 
   return periods
