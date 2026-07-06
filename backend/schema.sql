@@ -1,10 +1,4 @@
-DROP TABLE IF EXISTS attendance;
-DROP TABLE IF EXISTS payments;
-DROP TABLE IF EXISTS fees_cycles;
-DROP TABLE IF EXISTS tutor_settings;
-DROP TABLE IF EXISTS students;
-
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
   id TEXT PRIMARY KEY,
   tutor_id TEXT NOT NULL, -- Clerk Organization ID or User ID
   name TEXT NOT NULL,
@@ -17,9 +11,9 @@ CREATE TABLE students (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_students_tutor ON students(tutor_id);
+CREATE INDEX IF NOT EXISTS idx_students_tutor ON students(tutor_id);
 
-CREATE TABLE fees_cycles (
+CREATE TABLE IF NOT EXISTS fees_cycles (
   id TEXT PRIMARY KEY,
   student_id TEXT NOT NULL,
   month INTEGER NOT NULL,
@@ -30,9 +24,9 @@ CREATE TABLE fees_cycles (
   FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_fees_student ON fees_cycles(student_id);
+CREATE INDEX IF NOT EXISTS idx_fees_student ON fees_cycles(student_id);
 
-CREATE TABLE payments (
+CREATE TABLE IF NOT EXISTS payments (
   id TEXT PRIMARY KEY,
   student_id TEXT NOT NULL,
   amount INTEGER NOT NULL,
@@ -43,7 +37,7 @@ CREATE TABLE payments (
   FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
 );
 
-CREATE TABLE attendance (
+CREATE TABLE IF NOT EXISTS attendance (
   id TEXT PRIMARY KEY,
   student_id TEXT NOT NULL,
   date TEXT NOT NULL,
@@ -51,14 +45,14 @@ CREATE TABLE attendance (
   FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
 );
 
-CREATE TABLE tutor_settings (
+CREATE TABLE IF NOT EXISTS tutor_settings (
   tutor_id TEXT PRIMARY KEY,
   plan_type TEXT DEFAULT 'trial',
   trial_ends_at TEXT,
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE fee_reminders (
+CREATE TABLE IF NOT EXISTS fee_reminders (
   id TEXT PRIMARY KEY,
   org_id TEXT NOT NULL,
   student_id TEXT NOT NULL,
@@ -77,6 +71,6 @@ CREATE TABLE fee_reminders (
   FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_reminders_org ON fee_reminders(org_id);
-CREATE INDEX idx_reminders_student ON fee_reminders(student_id);
-CREATE INDEX idx_reminders_status ON fee_reminders(status);
+CREATE INDEX IF NOT EXISTS idx_reminders_org ON fee_reminders(org_id);
+CREATE INDEX IF NOT EXISTS idx_reminders_student ON fee_reminders(student_id);
+CREATE INDEX IF NOT EXISTS idx_reminders_status ON fee_reminders(status);
